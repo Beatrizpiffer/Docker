@@ -1,0 +1,171 @@
+docker login -u <usuario_dockerhub>
+
+cat ~/.docker/config.json
+
+docker logout
+
+docker image ls
+docker image history debian
+
+docker image inspect debian
+
+docker container run -dit --name servidor-debian debian
+docker container exec servidor-debian apt-get update
+docker container exec servidor-debian apt-get install nginx -y
+
+docker container commit servidor-debian webserver-nginx
+docker image ls
+
+docker image save webserver-nginx -o imagem-webserver-nginx.tar
+du -sh imagem-webserver-nginx.tar
+
+docker container rm -f servidor-debian
+docker image rm webserver-nginx
+docker image ls
+
+docker image load -i imagem-webserver-nginx.tar
+docker image ls
+
+docker container run -dit --name webserver webserver-nginx
+docker container ls
+
+docker container rm -f $(docker container ls -aq)
+docker container ls
+
+mkdir -p ~/dockerfiles/echo-container
+cd ~/dockerfiles/echo-container
+vim Dockerfile
+
+FROM         alpine
+ENTRYPOINT   ["echo"]
+CMD          ["--help"]
+
+docker image build -t echo-container .
+docker image ls
+
+docker container run --rm -it echo-container
+
+docker container run --rm -it echo-container Se inscreva no canal https://youtube.com/caiodelgadonew
+
+mkdir  ~/dockerfiles/webserver
+cd ~/dockerfiles/webserver
+vim Dockerfile
+
+FROM    debian
+RUN     apt-get update; \
+        apt-get install wget git apache2 -yq
+EXPOSE  80          
+CMD     ["apachectl", "-D", "FOREGROUND"]
+
+docker image build -t webserver .
+docker image ls
+
+docker login -u <usuario_dockerhub>
+
+docker image tag echo-container <usuario_dockerhub>/echo-container:latest
+docker image tag webserver <usuario_dockerhub>/webserver
+
+docker image push <usuario_dockerhub>/echo-container
+docker image push <usuario_dockerhub>/webserver
+
+docker logout
+
+mkdir -p ~/dockerfiles/exemplo1
+cd ~/dockerfiles/exemplo1
+echo "Dockerfile Melhores Práticas" > conteudo.txt
+
+vim Dockerfile
+
+FROM  busybox
+COPY  conteudo.txt /
+RUN   cat /conteudo.txt
+
+docker image build -t exemplo:v1 .
+
+mkdir -p image context
+mv Dockerfile image
+mv conteudo.txt context
+docker image build --no-cache -t exemplo:v2 -f image/Dockerfile context
+
+$ docker image ls 
+
+REPOSITORY        TAG           IMAGE ID       CREATED          SIZE
+exemplo           v2            589078e3e007   2 seconds ago    1.24MB
+exemplo           v1            de0bdd45cb9a   3 minutes ago    1.24MB
+
+sudo cp -r /var/log/ ~/dockerfiles/exemplo1/context/
+sudo chown -R vagrant:vagrant ~/dockerfiles/exemplo1/context/log
+docker image build --no-cache -t exemplo:v3 -f image/Dockerfile context
+
+Sending build context to Docker daemon  2.607kB
+Sending build context to Docker daemon  26.62MB
+
+vim context/.dockerignore
+
+# Comentario: Ignorando arquivos do diretorio log
+log
+
+docker image build --no-cache -t exemplo:v4 -f image/Dockerfile context
+
+mkdir -p ~/dockerfiles/dicas
+cd ~/dockerfiles/dicas
+git clone https://github.com/caiodelgadonew/java-wc-app.git app
+
+vim Dockerfile
+
+FROM        debian:9
+RUN         apt-get update
+RUN         apt-get install -y openjdk-8-jdk wget ssh vim
+COPY        app /app
+ENTRYPOINT  ["java", "-jar", "/app/target/app.jar"]
+
+docker image build -t  .
+
+vim Dockerfile
+
+FROM        debian:9
+RUN         apt-get update
+RUN         apt-get install -y openjdk-8-jdk wget ssh vim
+COPY        app/target/app.jar /app/app.jar
+COPY        app/samples /samples
+ENTRYPOINT  ["java", "-jar", "/app/app.jar"]
+
+docker image build -t .
+
+vim Dockerfile
+
+FROM       debian:9
+RUN        apt-get update \
+        && apt-get install -y \
+            openjdk-8-jdk wget \
+            ssh vim   
+COPY        app/target/app.jar /app/app.jar
+COPY        app/samples /samples
+ENTRYPOINT  ["java", "-jar", "/app/app.jar"]
+
+docker image build -t.
+
+vim Dockerfile
+
+FROM        debian:9
+RUN         apt-get update \
+         && apt-get install -y --no-install-recommends \
+            openjdk-8-jre 
+COPY        app/target/app.jar /app/app.jar
+COPY        app/samples /samples
+ENTRYPOINT  ["java", "-jar", "/app/app.jar"]
+
+docker image build -t.
+
+vim Dockerfile
+
+FROM        debian:9
+RUN         apt-get update \
+         && apt-get install -y --no-install-recommends \
+            openjdk-8-jre \
+         && rm -rf /var/lib/apt/lists \
+         && rm -rf /var/cache/apt
+COPY        app/target/app.jar /app/app.jar
+COPY        app/samples /samples
+ENTRYPOINT  ["java", "-jar", "/app/app.jar"]
+
