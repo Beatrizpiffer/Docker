@@ -1,0 +1,21 @@
+ docker container cp ~/dockerfiles webserver:/webdata
+CreateFile : The system cannot find the file specified.
+ docker container exec webserver ls -lR /webdata
+
+/webdata:
+total 0
+ docker container exec webserver df -Th
+Filesystem     Type     Size  Used Avail Use% Mounted on
+overlay        overlay  251G  1.5G  237G   1% /
+tmpfs          tmpfs     64M     0   64M   0% /dev
+tmpfs          tmpfs    1.9G     0  1.9G   0% /sys/fs/cgroup
+shm            tmpfs     64M     0   64M   0% /dev/shm
+/dev/sdc       ext4     251G  1.5G  237G   1% /webdata
+tmpfs          tmpfs    1.9G     0  1.9G   0% /proc/acpi
+tmpfs          tmpfs    1.9G     0  1.9G   0% /sys/firmware
+ docker volume ls
+DRIVER    VOLUME NAME
+local     4cf06641a308b47d9530a26083545441e647ef038e44b7109c868e00f8426a53
+local     5b68b373f1480c1cc91f855a4e19f6db397e085e9a0f5e2c6ff2a04b81d1d9fa
+local     15c8fdd2b9e60cfee5346639529228d54c8a6109c61006f562485fbd1062c529
+local     volume
