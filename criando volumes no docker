@@ -1,0 +1,20 @@
+docker container run -dit --name tmpfstest
+"docker container run" requires at least 1 argument.
+See 'docker container run --help'.
+
+Usage:  docker container run [OPTIONS] IMAGE [COMMAND] [ARG...]
+
+Run a command in a new container
+ docker container ls
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+ docker container rm -f $(docker container ls -aq)
+c39a9eb58874
+94bab20902cd
+> docker container run -dit -v /webdata --name webserver debian
+c0b3bd1f72d91c4d46aa9816d97d4c7788ca21696a9ef6e70103ff4480dc365a
+> docker volume ls
+DRIVER    VOLUME NAME
+local     4cf06641a308b47d9530a26083545441e647ef038e44b7109c868e00f8426a53
+local     5b68b373f1480c1cc91f855a4e19f6db397e085e9a0f5e2c6ff2a04b81d1d9fa
+local     15c8fdd2b9e60cfee5346639529228d54c8a6109c61006f562485fbd1062c529
+local     volume
